@@ -13,7 +13,7 @@ export const CATEGORIES = [
   { id: 'mobs', name: 'Mobs', icon: '🐉' },
 ];
 
-export const GAME_VERSIONS = ['1.21.4', '1.21.1', '1.20.4', '1.20.1', '1.19.4', '1.18.2', '1.16.5', '1.12.2'];
+export const GAME_VERSIONS = ['1.21.132', '1.21.4', '1.21.1', '1.20.4', '1.20.1', '1.19.4', '1.18.2', '1.16.5', '1.12.2'];
 
 export const LOADERS = ['Forge', 'Fabric', 'Quilt', 'NeoForge'];
 

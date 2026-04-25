@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, ChevronDown, Menu, X, Zap } from 'lucide-react';
+import { Search, ChevronDown, Menu, X, Zap, Upload } from 'lucide-react';
 
 export default function Header() {
   const [query, setQuery] = useState('');
@@ -70,6 +70,16 @@ export default function Header() {
 
           <div className="flex items-center gap-2 ml-auto">
             <Link
+              to="/upload"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors"
+              style={{ color: '#8890b5' }}
+              onMouseEnter={e => e.currentTarget.style.color = '#f97316'}
+              onMouseLeave={e => e.currentTarget.style.color = '#8890b5'}
+            >
+              <Upload size={14} />
+              Upload
+            </Link>
+            <Link
               to="/browse"
               className="hidden md:block px-4 py-1.5 rounded text-sm font-medium transition-colors"
               style={{ color: '#8890b5' }}
@@ -113,15 +123,20 @@ export default function Header() {
                 />
               </div>
             </form>
-            {['Browse', 'Games', 'Modpacks', 'Sign In'].map(item => (
+            {[
+              { label: 'Browse', href: '/browse' },
+              { label: 'Games', href: '/browse' },
+              { label: 'Upload a Mod', href: '/upload' },
+              { label: 'Sign In', href: '/browse' },
+            ].map(({ label, href }) => (
               <Link
-                key={item}
-                to="/browse"
+                key={label}
+                to={href}
                 className="block px-3 py-2 text-sm"
                 style={{ color: '#8890b5' }}
                 onClick={() => setMobileOpen(false)}
               >
-                {item}
+                {label}
               </Link>
             ))}
           </div>

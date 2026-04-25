@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
-import { MODS, CATEGORIES, GAME_VERSIONS, LOADERS, SORT_OPTIONS, formatDownloads, timeAgo } from '../data/mods';
+import { CATEGORIES, GAME_VERSIONS, LOADERS, SORT_OPTIONS } from '../data/mods';
+import { useMods } from '../context/ModContext';
 import ModCard from '../components/ModCard';
 
 export default function Browse() {
+  const { allMods } = useMods();
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
 
@@ -22,7 +24,7 @@ export default function Browse() {
   }
 
   const filtered = useMemo(() => {
-    let list = MODS;
+    let list = allMods;
     if (query) {
       const q = query.toLowerCase();
       list = list.filter(m =>
@@ -48,7 +50,7 @@ export default function Browse() {
       case 'name': return [...list].sort((a, b) => a.name.localeCompare(b.name));
       default: return [...list].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     }
-  }, [query, category, sort, version, loader]);
+  }, [allMods, query, category, sort, version, loader]);
 
   const activeFilters = [
     category && category !== 'all' && { key: 'category', label: CATEGORIES.find(c => c.id === category)?.name },

@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Download, Package, Zap, TrendingUp, Star } from 'lucide-react';
-import { MODS, CATEGORIES, formatDownloads } from '../data/mods';
+import { CATEGORIES, formatDownloads } from '../data/mods';
+import { useMods } from '../context/ModContext';
 import ModCard from '../components/ModCard';
-
-const FEATURED = MODS.filter(m => m.featured);
-const POPULAR = [...MODS].sort((a, b) => b.downloads - a.downloads).slice(0, 6);
-const RECENT = [...MODS].sort((a, b) => new Date(b.updated) - new Date(a.updated)).slice(0, 6);
 
 export default function Home() {
   const [query, setQuery] = useState('');
+  const { allMods } = useMods();
+  const FEATURED = allMods.filter(m => m.featured);
+  const POPULAR = [...allMods].sort((a, b) => b.downloads - a.downloads).slice(0, 6);
+  const RECENT = [...allMods].sort((a, b) => new Date(b.updated) - new Date(a.updated)).slice(0, 6);
   const navigate = useNavigate();
 
   function handleSearch(e) {
@@ -17,7 +18,7 @@ export default function Home() {
     if (query.trim()) navigate(`/browse?q=${encodeURIComponent(query.trim())}`);
   }
 
-  const totalDownloads = MODS.reduce((s, m) => s + m.downloads, 0);
+  const totalDownloads = allMods.reduce((s, m) => s + m.downloads, 0);
 
   return (
     <div>

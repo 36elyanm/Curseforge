@@ -1,14 +1,18 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
-  Download, Clock, Users, Tag, Star, Shield,
-  ChevronRight, ExternalLink, AlertCircle, Package, ArrowLeft
+  Download, Clock, Users, Tag, Star,
+  ExternalLink, AlertCircle, Package, ArrowLeft, CheckCircle
 } from 'lucide-react';
-import { MODS, CATEGORIES, formatDownloads, timeAgo } from '../data/mods';
+import { CATEGORIES, formatDownloads, timeAgo } from '../data/mods';
+import { useMods } from '../context/ModContext';
 import ModCard from '../components/ModCard';
 
 export default function ModDetail() {
   const { slug } = useParams();
-  const mod = MODS.find(m => m.slug === slug);
+  const { allMods, downloadMod, hasFile } = useMods();
+  const [downloaded, setDownloaded] = useState(false);
+  const mod = allMods.find(m => m.slug === slug);
 
   if (!mod) {
     return (
@@ -20,7 +24,7 @@ export default function ModDetail() {
     );
   }
 
-  const related = MODS.filter(m => m.category === mod.category && m.id !== mod.id).slice(0, 4);
+  const related = allMods.filter(m => m.category === mod.category && m.id !== mod.id).slice(0, 4);
   const category = CATEGORIES.find(c => c.id === mod.category);
 
   return (
@@ -87,13 +91,16 @@ export default function ModDetail() {
               </div>
 
               <button
+                onClick={() => {
+                  const ok = downloadMod(mod.slug);
+                  if (ok) { setDownloaded(true); setTimeout(() => setDownloaded(false), 2500); }
+                }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm text-white transition-colors shrink-0"
-                style={{ backgroundColor: '#f97316' }}
-                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#ea6b10'}
-                onMouseLeave={e => e.currentTarget.style.backgroundColor = '#f97316'}
+                style={{ backgroundColor: downloaded ? '#22c55e' : hasFile(mod.slug) ? '#f97316' : '#363a56' }}
+                title={hasFile(mod.slug) ? 'Download mod file' : 'No file uploaded yet'}
               >
-                <Download size={15} />
-                Install
+                {downloaded ? <CheckCircle size={15} /> : <Download size={15} />}
+                {downloaded ? 'Downloaded!' : hasFile(mod.slug) ? 'Download' : 'No File'}
               </button>
             </div>
 
@@ -228,13 +235,16 @@ export default function ModDetail() {
               style={{ backgroundColor: '#222436', border: '1px solid #363a56' }}
             >
               <button
+                onClick={() => {
+                  const ok = downloadMod(mod.slug);
+                  if (ok) { setDownloaded(true); setTimeout(() => setDownloaded(false), 2500); }
+                }}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm text-white transition-colors"
-                style={{ backgroundColor: '#f97316' }}
-                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#ea6b10'}
-                onMouseLeave={e => e.currentTarget.style.backgroundColor = '#f97316'}
+                style={{ backgroundColor: downloaded ? '#22c55e' : hasFile(mod.slug) ? '#f97316' : '#4b5563' }}
+                title={hasFile(mod.slug) ? 'Download mod file' : 'No file uploaded yet'}
               >
-                <Download size={14} />
-                Download Latest
+                {downloaded ? <CheckCircle size={14} /> : <Download size={14} />}
+                {downloaded ? 'Downloaded!' : hasFile(mod.slug) ? 'Download Latest' : 'No File Uploaded'}
               </button>
               <button
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-colors"
