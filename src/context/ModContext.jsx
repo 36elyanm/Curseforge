@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useMemo } from 'react';
 import { MODS } from '../data/mods';
 
 const ModContext = createContext(null);
@@ -9,7 +9,7 @@ export function ModProvider({ children }) {
   // map from mod slug -> File object (in-memory for the session)
   const [fileStore, setFileStore] = useState({});
 
-  const allMods = [...MODS, ...uploadedMods];
+  const allMods = useMemo(() => [...MODS, ...uploadedMods], [uploadedMods]);
 
   function uploadMod(modMeta, file) {
     const slug = modMeta.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -54,8 +54,13 @@ export function ModProvider({ children }) {
     return Boolean(fileStore[slug]);
   }
 
+  const value = useMemo(
+    () => ({ allMods, uploadMod, downloadMod, hasFile }),
+    [allMods, fileStore]
+  );
+
   return (
-    <ModContext.Provider value={{ allMods, uploadMod, downloadMod, hasFile }}>
+    <ModContext.Provider value={value}>
       {children}
     </ModContext.Provider>
   );
